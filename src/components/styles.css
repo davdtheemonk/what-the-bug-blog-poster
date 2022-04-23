@@ -1,0 +1,11 @@
+.blog__cont_over{
+    display:flex;
+    flex:1;
+    justify-content: center;
+    align-items: center;
+    margin:auto
+}
+.serverimg{
+    width: 200px;
+    height:200px
+}
