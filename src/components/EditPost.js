@@ -1,4 +1,4 @@
-import React,{useState,useRef} from "react";
+import React,{useState,useRef,useEffect} from "react";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import TextField from '@mui/material/TextField';
@@ -6,69 +6,111 @@ import DatePicker from "react-date-picker";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Stack from '@mui/material/Stack';
 import JoditEditor from "jodit-react"
+import { LoadingButton } from '@mui/lab';
 import axios from "axios"
 
-import{Link} from "react-router-dom"
+import{Link,useParams} from "react-router-dom"
 
 
 
-export default function EditPost(props) {
-    const [title,setTitle] = useState("");
-    const [location,setLocation] = useState("")
-    const [date,setDate] = useState(new Date())
-    const [post,setPost] = useState("")
-    const [timetoread,setTimeToRead]  = useState("")
-    const [image,setImage]  = useState("")
+export default function EditPost() {
+  const {id} = useParams();
+  const BASE_URL = "https://wtb-v1.herokuapp.com/posts/"
+
+    const [blogtitle,setTitle] = useState("");
+    const [bloglocation,setLocation] = useState("")
+    const [blogdate,setDate] = useState(new Date())
+    const [blogpost,setPost] = useState("")
+    const [blogtimetoread,setTimeToRead]  = useState("")
+    const [blogimage,setImage]  = useState("")
     const [blogs,setBlogs] = useState([]);
+    const [loading,setLoading]=useState(false)
+    const [notification,setNotification] = useState("")
+ 
     const editor = useRef(null)
-    axios.get('http://localhost:5000/posts/'+props.match.params.pk)
+  
+  
+    axios.get(`http://localhost:5000/posts/${id}`)
     .then(response=>{
-       setTitle(response.title);
-       setLocation(response.location);
-       setDate(new Date(response.date));
-       setPost(response.post);
-       setTimeToRead(response.timetoread);
-       setImage(response.image);
+       setTitle(response.data.title);
+       setLocation(response.data.location);
+       setDate(new Date(response.data.date));
+       setPost(response.data.post);
+       setTimeToRead(response.data.timetoread);
+       setImage(response.data.image);
+
+      
+      
 
     })
-       const handleSubmit = (e)=>{
+    .catch((error) => {
+      setNotification("An "+error+" occurred");
+      console.log(error)
+    })
+ 
+      async function handleSubmit(e){
         e.preventDefault();
-        const Blog = {
-            title :title,
-            date : date,
-            location :location,
-            image : image,
-            post : post,
-            timetoread: timetoread,
+        setLoading(true);
+        const title = JSON.stringify(blogtitle)
+        const date = JSON.stringify(blogdate)
+        const location = JSON.stringify(bloglocation)
+        const image= JSON.stringify(blogimage)
+        const timetoread = JSON.stringify(blogtimetoread)
+        const post = JSON.stringify(blogpost)
+        console.log(date.substring(1,11))
+    
+    
+        const options = {
+          method:'put',
+          headers:{
+              'Content-type':"application/json"
+          },
+          data:{
+            "title" :title,
+                "date" : date.substring(1,11),
+                 "location" :location,
+                "timetoread": timetoread,
+                "image" : image,
+                "post" : post
+              
+          }
+      }
+    
+        await  axios(`https://wtb-v1.herokuapp.com/posts/${id}`,options)
+        .then(res=>{setNotification("Blog Updated Succesful ")
+        setLoading(false);
+      })
         
-        }
-        axios.post("http://localhost:5000/posts/update"+props.match.params.pk)
-        .then(res=>console.log(res.data))
-        window.location ="/"
+        .catch((err)=>
+        setNotification("An error:"+err+"occurred"))
+
+        
     }
 
         return(
             <div>
                
-
-
+               {notification!==""&& <div class="alert alert-danger" role="alert">
+  <p>{notification}</p>
+</div>
+}
 <form onSubmit={handleSubmit}>
   <div className="mb-2">
     
     <label className="form-label">Title of the Blog</label>
-    <input type="text" onChange={(e)=>setTitle(e.target.value)} value={title} className="form-control" id="title" aria-describedby="emailHelp"/>
+    <input type="text" onChange={(e)=>setTitle(e.target.value)} value={blogtitle} className="form-control" id="title" aria-describedby="emailHelp"/>
   </div>
   <div className="mb-2">
     <label  className="form-label">Location</label>
-    <input type="text"onChange={(e)=>setLocation(e.target.value)} value={location}  className="form-control" id="location" aria-describedby="emailHelp"/>
+    <input type="text"onChange={(e)=>setLocation(e.target.value)} value={bloglocation}  className="form-control" id="location" aria-describedby="emailHelp"/>
     </div>
     <div className="mb-2">
     <label  className="form-label">Image id from Unsplash</label>
-    <input type="text" onChange={(e)=>setImage(e.target.value)} value={image}  className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+    <input type="text" onChange={(e)=>setImage(e.target.value)} value={blogimage}  className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
     </div>
     <div className="mb-2">
     <label className="form-label">Time to read</label>
-    <input type="text" onChange={(e)=>setTimeToRead(e.target.value)} value={timetoread} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+    <input type="text" onChange={(e)=>setTimeToRead(e.target.value)} value={blogtimetoread} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
    
     </div>
   
@@ -81,7 +123,7 @@ export default function EditPost(props) {
           label="Responsive"
           openTo="year"
           views={['year', 'month', 'day']}
-          value={date}
+          value={blogdate}
           onChange={(newValue) => {
             setDate(newValue);
           }}
@@ -92,10 +134,11 @@ export default function EditPost(props) {
         </div>
         <div className="mb-2">
         <label className="form-label">Your post goes Here</label>
-        <JoditEditor ref={editor} onChange={(e)=>setPost(e.target.value)}/>
+        <JoditEditor value={blogpost} ref={editor} onChange={(content)=>setPost(content)}/>
         </div>
     
-  <button type="submit" className="btn btn-primary">Edit Blog</button>
+        <LoadingButton variant="contained"loading={loading} onClick={handleSubmit}>Post Blog</LoadingButton>
+
 </form>
             </div>
 

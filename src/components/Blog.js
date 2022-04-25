@@ -1,34 +1,29 @@
 import React,{useState} from "react";
 import{Link} from "react-router-dom"
 import "./styles.css"
+import { LoadingButton } from '@mui/lab';
 
 
 
 export default function Blog(props){
+   
 return(
-    <div>
-    {props==null?
-    <div className="blog__cont_over">
-        <img className="serverimg" src="/server.svg"/>
-        <p>Oops!! I snapped</p></div>:
-    <div>
-    <td>
-        <tr>{props.blog.title}</tr>
-        <tr>{props.blog.date}</tr>
-        <tr>{props.blog.location}</tr>
-        <tr>{props.blog.image}</tr>
-        <tr>{props.blog.timetoread}</tr>
-        <tr>{props.blog.post}</tr>
-    </td>
-    <td>
-        <Link to={"/edit/"+props.blog.pk}>edit</Link> | <a href="#" onClick={()=>{
-            props.deleteBlog(props.blog.pk)
 
-        }}>delete</a>
-    </td>
-</div>
+   
+    <tr>
+        <td>{props.blog.title}</td>
+        <td>{props.blog.date}</td>
+        <td>{props.blog.location}</td>
+        <td>{props.blog.image}</td>
+        <td>{props.blog.timetoread}</td>
+        <td>{props.blog.post.substring(0,10)+"...."}</td>
+   
+    <td>
+        <Link className="btn btn-primary"  to={"/edit/"+props.blog.pk}>edit</Link> |  <LoadingButton loading={props.loading} sx={{backgroundColor:"red"}} className="btn btn-danger" variant="contained" onClick={()=>{props.deleteBlog(props.blog.pk);
+        props.setLoading(true);}}>delete</LoadingButton>
  
-    }
-       </div>
+ </td>
+    </tr>
+
 )    
 }

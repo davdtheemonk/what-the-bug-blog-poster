@@ -1,37 +1,62 @@
 import React,{useState} from "react";
 import axios from "axios"
 import Blog from "./Blog"
+import { set } from "date-fns";
 
-
+import "./styles.css"
 
 
 export default function PostList(){
     const [blogs,setBlogs] =useState([])
+    const [notification,setNotification]=useState("")
+    const [loading,setLoading]=useState(false)
+    const [loader,setLoader] = useState(true)
+
     axios.get("http://localhost:5000/posts/")
     .then(response=>{
-
+    setLoader(false);
     setBlogs(response.data)
-    console.log(blogs)
+  
     }
     ).catch((err)=>{
-        console.log(err)
+    
+          setTimeout(() => {
+                 setNotification("An error:"+err+"occurred")
+               
+           }, 5);
+           setNotification("")
+       
     }
     )
-    const deleteBlog=(id)=>{
-        axios.get("http://localhost:5000/posts/"+id)
-        .then(response=>console.log(response.data));
-        setBlogs(blogs.filter(el=>el.pk!=id))
+    async function deleteBlog(id){
+       await axios.delete(`https://wtb-v1.herokuapp.com/posts/${id}`)
+        .then(response=>{
+            setNotification("Deleted Blog of id :"+id);
+            setLoading(false);
+            setBlogs(blogs.filter(blog=>blog.pk!==id));
+        })
+        .catch((err)=>
+        setNotification("An error: "+err+" occurred"))
+        
+        
+
     }
     
      const displayBlogs=   blogs.map(blog=>{
-            return <Blog blog={blog} deleteBlog={deleteBlog} key={blog.pk}/>
+            return <Blog setLoading={setLoading} loading={loading} blog={blog} deleteBlog={deleteBlog} notification={notification} key={blog.pk}/>
         })
-        console.log(displayBlogs)     
-    
+
+
 
     return(
         <div>
+           {notification!==""&&
+            <div class="alert alert-danger" role="alert">
+   <p>{notification}</p>
+</div>}
+{ loader && <div className="loader"><img src="load.gif"/> </div>}
            <h3>Live Blogs</h3>
+           
            <table className="table">
                <thead className="thead-light">
                    <tr>

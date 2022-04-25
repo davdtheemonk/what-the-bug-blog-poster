@@ -9,3 +9,18 @@
     width: 200px;
     height:200px
 }
+.nav_img{
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    margin-right: 10px;
+}
+.loader{
+    position: absolute;
+    margin-top:200px;
+    margin-left:400px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    animation: blinker 1s cubic-bezier(0.5, 0, 1, 1) infinite alternate;
+}

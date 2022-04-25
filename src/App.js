@@ -13,7 +13,7 @@ function App() {
      <div className="container mt-3">
      <Routes>
      
-     <Route path="/" element={<PostList/>}/>
+     <Route exact path="/" element={<PostList/>}/>
      <Route path="/edit/:id"  element={<EditPost/>}/>
      <Route path="/create"  element={<CreatePost/>}/>
 
