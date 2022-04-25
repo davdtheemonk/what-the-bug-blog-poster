@@ -15,7 +15,7 @@ import{Link,useParams} from "react-router-dom"
 
 export default function EditPost() {
   const {id} = useParams();
-  const BASE_URL = "https://wtb-v1.herokuapp.com/posts/"
+  const BASE_URL = "url"
 
     const [blogtitle,setTitle] = useState("");
     const [bloglocation,setLocation] = useState("")
@@ -76,7 +76,7 @@ export default function EditPost() {
           }
       }
     
-        await  axios(`https://wtb-v1.herokuapp.com/posts/${id}`,options)
+        await  axios(`url}`,options)
         .then(res=>{setNotification("Blog Updated Succesful ")
         setLoading(false);
       })
