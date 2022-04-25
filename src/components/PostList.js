@@ -29,7 +29,7 @@ export default function PostList(){
     }
     )
     async function deleteBlog(id){
-       await axios.delete(`https://wtb-v1.herokuapp.com/posts/${id}`)
+       await axios.delete(`url`)
         .then(response=>{
             setNotification("Deleted Blog of id :"+id);
             setLoading(false);
