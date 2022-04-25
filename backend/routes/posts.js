@@ -2,7 +2,7 @@ const router = require('express').Router();
 const axios = require('axios');
 const FormData = require('form-data');
 const { response } = require('express');
-const BASE_URL = "https://wtb-v1.herokuapp.com"
+const BASE_URL = " "//url
 
 router.route('/').get((req,res)=>{
     axios.get(BASE_URL+"/posts")
