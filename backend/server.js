@@ -5,7 +5,7 @@ const bodyParserErrorHandler = require('express-body-parser-error-handler')
 
 require('dotenv').config()
 
-const BASE_URL = "https://wtb-v1.herokuapp.com/posts"
+const BASE_URL = " "//url
 
 const app =express();
 const port = process.env.PORT ||5000;
